@@ -3,6 +3,7 @@
 [![tests](https://github.com/Madhuhas/self-correcting-code-agent/actions/workflows/tests.yml/badge.svg)](https://github.com/Madhuhas/self-correcting-code-agent/actions/workflows/tests.yml)
 ![python](https://img.shields.io/badge/python-3.11-3776AB)
 ![runs on](https://img.shields.io/badge/runs%20on-CPU%20only-475569)
+[![license](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
 
 A small model writes Python. The code runs in a sandbox. If it crashes, the traceback goes back to the model and it tries again. After three attempts it stops, whatever happens.
 
