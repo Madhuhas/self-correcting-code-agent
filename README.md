@@ -101,7 +101,7 @@ PermissionError: sandbox policy: network access is not allowed
 
 So a blocked call becomes a normal error that goes back to the model like any other traceback. The memory and process limits come from the kernel (Job Object, rlimits), so those still hold even if code gets past the guard.
 
-For code you really don't trust, use `--sandbox docker`. The same bootstrap then runs inside a `python:3.11-slim` container with no network, a read-only filesystem, no Linux capabilities, and memory and process limits.
+For code you really don't trust, use `--sandbox docker`. The same bootstrap then runs inside a `python:3.11-slim` container with no network, a read-only filesystem, no Linux capabilities, and memory and process limits. It needs a Docker engine running Linux containers (on Windows, that's Docker Desktop's default mode). The CI pipeline runs this path on every push.
 
 ## Results on a CPU laptop
 

@@ -137,13 +137,13 @@ except BaseException as e:
 
 # ------------------------------------------------------------------------ OS limits
 
-def _posix_limits(max_memory_mb: int, cpu_seconds: int):
+def _posix_limits(max_memory_mb: int, cpu_seconds: int, max_file_bytes: int):
     def apply() -> None:
         import resource
 
         mem = max_memory_mb * 1024 * 1024
         limits = [(resource.RLIMIT_AS, mem), (resource.RLIMIT_CPU, cpu_seconds),
-                  (resource.RLIMIT_FSIZE, 10 * 1024 * 1024)]
+                  (resource.RLIMIT_FSIZE, max_file_bytes)]
         # No forking. RLIMIT_NPROC is per-user and ignored for root, so skip it there.
         if hasattr(resource, "RLIMIT_NPROC") and os.getuid() != 0:
             limits.append((resource.RLIMIT_NPROC, 0))
@@ -214,10 +214,14 @@ class _WindowsJob:
 
 
 def docker_available() -> bool:
+    """True if a Docker engine running *Linux* containers is reachable (Windows containers
+    don't support the read-only root filesystem this mode relies on)."""
     try:
-        return subprocess.run(["docker", "info"], capture_output=True, timeout=15).returncode == 0
+        out = subprocess.run(["docker", "info", "--format", "{{.OSType}}"],
+                             capture_output=True, text=True, timeout=15)
     except (OSError, subprocess.TimeoutExpired):
         return False
+    return out.returncode == 0 and out.stdout.strip() == "linux"
 
 
 def _docker_command(name: str, workdir: str, image: str, max_memory_mb: int, allow_network: bool) -> list[str]:
@@ -287,7 +291,7 @@ def run_code(
             cmd = [sys.executable, *flags, "-B", "-X", "utf8", str(bootstrap), str(script),
                    str(ready), str(go), workdir, "1" if allow_network else "0"]
             if os.name == "posix":
-                kwargs["preexec_fn"] = _posix_limits(max_memory_mb, int(timeout_s) + 1)
+                kwargs["preexec_fn"] = _posix_limits(max_memory_mb, int(timeout_s) + 1, max_output_bytes)
             elif os.name == "nt":
                 job = _WindowsJob(max_memory_mb)
 

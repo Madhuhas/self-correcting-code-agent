@@ -49,7 +49,9 @@ def test_bootstrap_frame_hidden_and_main_guard_runs():
 
 def test_output_flood_is_killed():
     r = run_code("while True: print('x' * 1000)", timeout_s=30, max_output_bytes=1_000_000)
-    assert r.timed_out and "output exceeded" in r.error
+    assert not r.success
+    # Whichever fires first: our watcher, or the kernel's RLIMIT_FSIZE on Linux/macOS.
+    assert "output exceeded" in r.error or "File too large" in r.error
 
 
 def test_output_is_truncated_keeping_the_tail():
