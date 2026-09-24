@@ -1,0 +1,3 @@
+langgraph>=0.2
+pytest>=7
+# llama-cpp-python is installed separately from a prebuilt CPU wheel; see README.

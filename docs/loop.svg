@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 300" width="880" height="300" role="img" aria-labelledby="t d">
+  <title id="t">Self-correcting loop</title>
+  <desc id="d">A task goes to the fast model, the generated code crashes in the sandbox, the traceback is sent back, the debug model fixes it, and the tests pass. A circuit breaker stops the loop after three attempts.</desc>
+  <style>
+    text { font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; fill: #e2e8f0; }
+    .mono { font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace; }
+    .h { font-size: 15px; font-weight: 600; }
+    .s { font-size: 11.5px; fill: #94a3b8; }
+    .node { fill: #1e293b; stroke: #334155; stroke-width: 1.5; }
+    .edge { fill: none; stroke: #475569; stroke-width: 1.8; }
+    .fb { fill: none; stroke: #64748b; stroke-width: 1.8; stroke-dasharray: 5 5; }
+    .warn { fill: none; stroke: #b45309; stroke-width: 1.6; stroke-dasharray: 4 4; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#64748b"/>
+    </marker>
+    <marker id="aw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b45309"/>
+    </marker>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="880" height="300" rx="16" fill="#0f172a"/>
+
+  <text x="24" y="36" class="mono s">python -m agent "task" --tests tests.py</text>
+  <text x="856" y="36" text-anchor="end" class="mono s">attempt 1 / 3<animate attributeName="opacity" values="1;0" keyTimes="0;0.5" dur="10s" calcMode="discrete" repeatCount="indefinite"/></text>
+  <text x="856" y="36" text-anchor="end" class="mono s" style="fill:#93c5fd" opacity="0">attempt 2 / 3<animate attributeName="opacity" values="0;1" keyTimes="0;0.5" dur="10s" calcMode="discrete" repeatCount="indefinite"/></text>
+
+  <!-- edges -->
+  <line x1="140" y1="142" x2="198" y2="142" class="edge" marker-end="url(#a)"/>
+  <line x1="370" y1="142" x2="428" y2="142" class="edge" marker-end="url(#a)"/>
+  <path d="M600,132 C640,132 650,76 688,76" class="edge" marker-end="url(#a)"/>
+  <path d="M600,152 C640,152 650,212 688,212" class="warn" marker-end="url(#aw)"/>
+  <path d="M515,172 C515,262 285,262 285,174" class="fb" marker-end="url(#a)"/>
+  <text x="400" y="284" text-anchor="middle" class="s">traceback + earlier errors go back into the prompt</text>
+
+  <!-- task -->
+  <rect x="24" y="112" width="116" height="60" rx="10" class="node"/>
+  <text x="82" y="139" text-anchor="middle" class="h">Task</text>
+  <text x="82" y="158" text-anchor="middle" class="s">+ your tests</text>
+
+  <!-- generate -->
+  <rect x="200" y="112" width="170" height="60" rx="10" class="node"/>
+  <text x="285" y="139" text-anchor="middle" class="h">Generate code</text>
+  <text x="285" y="158" text-anchor="middle" class="s mono">fast · Qwen 1.5B<animate attributeName="opacity" values="1;0" keyTimes="0;0.5" dur="10s" calcMode="discrete" repeatCount="indefinite"/></text>
+  <text x="285" y="158" text-anchor="middle" class="s mono" fill="#93c5fd" style="fill:#93c5fd" opacity="0">debug · Qwen 3B<animate attributeName="opacity" values="0;1" keyTimes="0;0.5" dur="10s" calcMode="discrete" repeatCount="indefinite"/></text>
+
+  <!-- sandbox -->
+  <rect x="430" y="112" width="170" height="60" rx="10" class="node"/>
+  <rect x="430" y="112" width="170" height="60" rx="10" fill="#7f1d1d" fill-opacity="0.35" stroke="#f87171" stroke-width="1.8" opacity="0">
+    <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.18;0.32" dur="10s" calcMode="discrete" repeatCount="indefinite"/>
+  </rect>
+  <rect x="430" y="112" width="170" height="60" rx="10" fill="#14532d" fill-opacity="0.35" stroke="#4ade80" stroke-width="1.8" opacity="0">
+    <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.64;0.98" dur="10s" calcMode="discrete" repeatCount="indefinite"/>
+  </rect>
+  <text x="515" y="139" text-anchor="middle" class="h">Run in sandbox</text>
+  <text x="515" y="158" text-anchor="middle" class="s">timeout · memory · policy</text>
+  <text x="515" y="100" text-anchor="middle" class="mono" font-size="12" style="fill:#f87171" opacity="0">ZeroDivisionError: division by zero
+    <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.18;0.5" dur="10s" calcMode="discrete" repeatCount="indefinite"/></text>
+  <text x="515" y="100" text-anchor="middle" class="mono" font-size="12" style="fill:#4ade80" opacity="0">all tests passed
+    <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.66;0.98" dur="10s" calcMode="discrete" repeatCount="indefinite"/></text>
+
+  <!-- done -->
+  <rect x="690" y="48" width="166" height="56" rx="10" class="node"/>
+  <rect x="690" y="48" width="166" height="56" rx="10" fill="#14532d" fill-opacity="0.4" stroke="#4ade80" stroke-width="1.8" opacity="0" filter="url(#glow)">
+    <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.8;0.98" dur="10s" calcMode="discrete" repeatCount="indefinite"/>
+  </rect>
+  <text x="773" y="72" text-anchor="middle" class="h">Done</text>
+  <text x="773" y="91" text-anchor="middle" class="s">code + passing tests</text>
+
+  <!-- breaker -->
+  <rect x="690" y="184" width="166" height="56" rx="10" class="node" style="stroke:#b45309"/>
+  <text x="773" y="208" text-anchor="middle" class="h" style="fill:#fbbf24">Circuit breaker</text>
+  <text x="773" y="227" text-anchor="middle" class="s">3 attempts · token cap</text>
+
+  <!-- the moving token: one circle per leg of the trip -->
+  <g fill="#60a5fa" filter="url(#glow)">
+    <circle r="6" opacity="0">
+      <animateMotion path="M140,142 L515,142" keyPoints="0;0;1;1" keyTimes="0;0.04;0.18;1" calcMode="linear" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.04;0.18" dur="10s" calcMode="discrete" repeatCount="indefinite"/>
+    </circle>
+    <circle r="6" opacity="0" fill="#f87171">
+      <animateMotion path="M515,142 L515,172 C515,262 285,262 285,172 L285,142" keyPoints="0;0;1;1" keyTimes="0;0.32;0.5;1" calcMode="linear" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.32;0.5" dur="10s" calcMode="discrete" repeatCount="indefinite"/>
+    </circle>
+    <circle r="6" opacity="0">
+      <animateMotion path="M285,142 L515,142" keyPoints="0;0;1;1" keyTimes="0;0.54;0.64;1" calcMode="linear" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.54;0.64" dur="10s" calcMode="discrete" repeatCount="indefinite"/>
+    </circle>
+    <circle r="6" opacity="0" fill="#4ade80">
+      <animateMotion path="M600,132 C640,132 650,76 690,76" keyPoints="0;0;1;1" keyTimes="0;0.72;0.8;1" calcMode="linear" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.72;0.8" dur="10s" calcMode="discrete" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>
